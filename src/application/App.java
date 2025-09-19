@@ -2,8 +2,10 @@ package application;
 
 import entities.Product;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -18,9 +20,15 @@ public class App {
         List<Product> products = new ArrayList<>();
 
         System.out.println( "Enter the file path: " );
-        String SourceFilePath = sc.nextLine();
+        String sourceFilePath = sc.nextLine();
 
-        File sourceFile = new File( SourceFilePath );
+        File sourceFile = new File( sourceFilePath );
+
+        String sourceFolder = sourceFile.getParent();
+
+        boolean success = new File( sourceFolder + "\\out" ).mkdir();
+
+        String targetFile = sourceFolder + "\\out\\summary.csv";
 
         try ( BufferedReader br = new BufferedReader( new FileReader( sourceFile ) ) ) {
         
@@ -36,13 +44,35 @@ public class App {
                 item = br.readLine();
             }
 
+            try ( BufferedWriter bw = new BufferedWriter( new FileWriter( targetFile ) ) ) {
+
+                for ( Product elem : products ) {
+                    bw.write( elem.getName() + ", " + String.format( "%.2f" , elem.total() ) );
+                    bw.newLine();
+                }
+                
+                System.out.println( targetFile + " CREATED SUCCESSFULLY" );
+
+            } catch ( Exception e ) {
+                System.out.println( "ERROR WRITING FILE: " + e.getMessage() );
+            }
+            finally {
+                sc.close();
+            }
+
         } catch ( Exception e ) {
-            System.out.println( "ERROR: " + e.getMessage() );
+            System.out.println( "ERROR READING FILE: " + e.getMessage() );
+        }
+        finally {
+            sc.close();
         }
 
-        for ( Product elem :  products ) {
-            System.out.println( elem.getName() + ", " + elem.getPrice() + ", " + elem.getQuantity() );
-        }
+        // for ( Product elem :  products ) {
+        //     System.out.println( elem.getName() + ", " + elem.getPrice() + ", " + elem.getQuantity() );
+        // }
+
+        // System.out.println( "PATH: " + sourceFolder );
+        // System.out.println( "CREATE FOLDER: " + success );
 
         sc.close();
 
