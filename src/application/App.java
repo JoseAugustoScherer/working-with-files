@@ -73,8 +73,5 @@ public class App {
 
         // System.out.println( "PATH: " + sourceFolder );
         // System.out.println( "CREATE FOLDER: " + success );
-
-        sc.close();
-
     }
 }
